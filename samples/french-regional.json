@@ -1,0 +1,32 @@
+{
+  "id": "sample-french-regional",
+  "title": "Sample: French, France vs Switzerland",
+  "description": "A few everyday words that mean different things in France and in French-speaking Switzerland.",
+  "from": { "name": "French", "lang": "fr-FR" },
+  "to": { "name": "English", "lang": "en" },
+  "senses": [
+    { "id": "fr", "label": "France" },
+    { "id": "ch", "label": "Switzerland" }
+  ],
+  "items": [
+    { "term": "le déjeuner", "pos": "noun", "meaning": { "fr": "lunch", "ch": "breakfast" },
+      "context": "On prend le [déjeuner] à sept heures.", "contextTranslation": "We have breakfast (CH) / lunch (FR) at seven." },
+    { "term": "le dîner", "pos": "noun", "meaning": { "fr": "dinner, evening meal", "ch": "lunch, midday meal" },
+      "context": "Le [dîner] est servi à midi.", "contextTranslation": "Lunch is served at noon." },
+    { "term": "le souper", "pos": "noun", "meaning": { "fr": "late supper (after a show)", "ch": "dinner, evening meal" },
+      "context": "Viens pour le [souper] ce soir !" },
+    { "term": "le cornet", "pos": "noun", "meaning": { "fr": "cone (ice cream, paper)", "ch": "bag (plastic or paper)" },
+      "context": "Vous voulez un [cornet] pour vos courses ?" },
+    { "term": "le linge", "pos": "noun", "meaning": { "fr": "laundry; linen", "ch": "towel; laundry" },
+      "note": "In Switzerland « un linge » on its own is usually a towel." },
+    { "term": "une action", "pos": "noun", "meaning": { "fr": "action; share (stock)", "ch": "special offer, sale" },
+      "context": "Les fraises sont en [action] cette semaine." },
+    { "term": "le foehn", "alts": ["le föhn"], "pos": "noun", "meaning": { "fr": "foehn (warm mountain wind)", "ch": "hairdryer; foehn wind" } },
+    { "term": "le galetas", "pos": "noun", "meaning": { "fr": "hovel, garret", "ch": "attic, loft" } },
+    { "term": "réduire", "pos": "verb", "meaning": { "fr": "to reduce", "ch": "to put away, tidy up; to reduce" },
+      "note": "Regional (Vaud, Fribourg): « réduis tes affaires » = put your things away." },
+    { "term": "la panosse", "pos": "noun", "meaning": "mop", "note": "Swiss word; in France: la serpillière." },
+    { "term": "la bonne-main", "pos": "noun", "meaning": "tip (gratuity)", "note": "Swiss word; in France: le pourboire." },
+    { "term": "septante", "pos": "number", "meaning": "seventy", "note": "Swiss and Belgian; in France: soixante-dix." }
+  ]
+}
