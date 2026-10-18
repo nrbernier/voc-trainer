@@ -295,3 +295,13 @@ a { color: var(--accent); }
   .modes { grid-template-columns: 1fr; }
   .prompt .big { font-size: 28px; }
 }
+
+/* auto-advance countdown on the Next button */
+.btn.auto { position: relative; overflow: hidden; }
+.btn.auto span { position: relative; z-index: 1; }
+.btn.auto::before {
+  content: ""; position: absolute; inset: 0; transform-origin: left;
+  background: rgba(255, 255, 255, .22); animation: fill var(--dur, 1600ms) linear forwards;
+}
+@keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .btn.auto::before { animation: none; } }

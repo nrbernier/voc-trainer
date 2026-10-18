@@ -500,6 +500,7 @@ function gradeWrite(q, input) {
 let screen = { name: 'home' };
 let session = null;
 let autoTimer = null;
+const AUTO_MS = 1600;
 
 const MODES = {
   discover: { title: 'Discover', desc: 'Get to know the words: cards or the whole list.', icon: 'cards' },
@@ -569,6 +570,7 @@ function pickTrain(s) {
 function nextQuestion() {
   clearTimeout(autoTimer);
   const s = session;
+  s.autoPending = false;
   if (s.idx >= s.n) { screen = { name: 'summary' }; render(); return; }
   let q;
   if (s.mode === 'train') {
@@ -600,7 +602,20 @@ function finishQuestion(correct, how) {
   if (!correct && s.mode === 'train') s.requeue.push({ e: q.e, dir: q.dir, due: s.idx + 3 });
   s.idx++;
   render();
-  if (correct && how !== 'close' && settings.autoNext) autoTimer = setTimeout(() => { if (session && session.q === q) nextQuestion(); }, 1100);
+  if (correct && how !== 'close' && settings.autoNext) {
+    s.autoPending = true;
+    render();
+    autoTimer = setTimeout(() => { if (session && session.q === q && s.autoPending) nextQuestion(); }, AUTO_MS);
+  }
+}
+
+function holdQuestion() {
+  clearTimeout(autoTimer);
+  if (!session || !session.autoPending) return;
+  session.autoPending = false;
+  render();
+  const fb = document.querySelector('.feedback');
+  if (fb) fb.scrollIntoView({ block: 'start', behavior: 'smooth' });
 }
 
 function overrideCorrect() {
@@ -788,7 +803,8 @@ function renderSession() {
   }
 
   let bar;
-  if (q.state === 'done') bar = `<button id="next-btn" class="btn primary" data-action="next">${s.idx >= s.n ? 'See results' : 'Next'}</button>`;
+  if (q.state === 'done' && s.autoPending) bar = `<button class="btn" data-action="hold">Stay</button><button id="next-btn" class="btn primary auto" data-action="next" style="--dur:${AUTO_MS}ms"><span>${s.idx >= s.n ? 'See results' : 'Next'}</span></button>`;
+  else if (q.state === 'done') bar = `<button id="next-btn" class="btn primary" data-action="next">${s.idx >= s.n ? 'See results' : 'Next'}</button>`;
   else if (!q.options) bar = `<button class="btn" data-action="skip">Show answer</button><button class="btn primary" data-action="check">Check</button>`;
   else bar = `<button class="btn" data-action="skip">Show answer</button>`;
 
@@ -888,7 +904,7 @@ function renderSettings() {
     ${tog('acceptTranslit', 'Accept transliteration as a typed answer')}
     ${tog('hideMarks', 'Hide diacritics on terms (vowel points, accents)')}
     ${tog('autoSpeak', 'Read terms aloud automatically')}
-    ${tog('autoNext', 'Move on automatically after a correct answer')}
+    ${tog('autoNext', 'Move on automatically after a correct answer (tap “Stay” to keep a word open)')}
   </div></section>
 
   <section class="section"><h2 class="section-title">GitHub repository</h2><div class="card pad">
@@ -1011,6 +1027,7 @@ const actions = {
   skip() { const q = session.q; if (q.state !== 'done') { q.input = ($('#answer') || {}).value || ''; finishQuestion(false, 'skip'); } },
   next() { nextQuestion(); },
   override() { overrideCorrect(); },
+  hold() { holdQuestion(); },
   quit() {
     if (session && session.results.length) { screen = { name: 'summary' }; session.n = session.results.length; render(); }
     else actions.home();
@@ -1114,10 +1131,11 @@ function submitAnswer() {
 }
 
 document.addEventListener('click', (ev) => {
+  if (session && session.autoPending && ev.target.closest('.feedback, .prompt') && !ev.target.closest('[data-action]')) { holdQuestion(); return; }
   const t = ev.target.closest('[data-action]');
   if (!t || t.disabled) return;
   ev.preventDefault();
-  if (autoTimer && t.dataset.action !== 'next') clearTimeout(autoTimer);
+  if (session && session.autoPending && !['next', 'hold'].includes(t.dataset.action)) holdQuestion();
   const fn = actions[t.dataset.action];
   if (fn) fn(t, ev);
 });
