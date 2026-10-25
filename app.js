@@ -292,7 +292,8 @@ function pool(opts = {}) {
 /** Sense choices across the selected lists (union by id). */
 function senseOptions() {
   const out = [];
-  for (const l of selectedLists()) for (const s of l.senses) if (!out.some((o) => o.id === s.id)) out.push(s);
+  const ls = selectedLists().slice().sort((a, b) => b.senses.length - a.senses.length);
+  for (const l of ls) for (const s of l.senses) if (!out.some((o) => o.id === s.id)) out.push(s);
   return out;
 }
 function currentSense() {
